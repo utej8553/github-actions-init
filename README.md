@@ -14,10 +14,10 @@ This project demonstrates a fully automated pipeline for deploying a Spring Boot
 
 ---
 
-## 🔄 CI/CD Pipeline Flow
+##  CI/CD Pipeline Flow
 
 1. **Push** – Developer pushes code to the `main` branch.
-2. **Build** – GitHub Actions pulls the code and runs a a Maven build to generate a `.jar`.
+2. **Build** – GitHub Actions pulls the code and runs a Maven build to generate a `.jar`.
 3. **Containerize** – A Docker image is built using the provided `Dockerfile`.
 4. **Registry** – The image is pushed to DockerHub.
 5. **Deploy** – GitHub Actions connects to the AWS EC2 instance via SSH.
@@ -25,7 +25,7 @@ This project demonstrates a fully automated pipeline for deploying a Spring Boot
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 
 demo-simple-server
@@ -54,7 +54,7 @@ The pipeline executes the following automated steps:
 
 ---
 
-## 🔐 Configuration & Security
+##  Configuration & Security
 
 ### GitHub Secrets
 
@@ -76,7 +76,7 @@ EC2_SSH_KEY
 
 ---
 
-## ☁️ EC2 Server Setup
+## EC2 Server Setup
 
 Run these commands once on your Ubuntu EC2 instance:
 
@@ -84,26 +84,29 @@ Run these commands once on your Ubuntu EC2 instance:
 sudo apt update
 sudo apt install docker.io -y
 sudo usermod -aG docker ubuntu
+```
 
 Log out and log back in for group changes to take effect.
 
-🔓 AWS Security Group
+ AWS Security Group
 
 Ensure the following inbound ports are open:
 
 Port	Purpose
 22	SSH deployment access
 8080	Spring Boot API access
-🚀 How to Deploy
+ How to Deploy
 
 Push code to the main branch:
-
+```bash
 git add .
 git commit -m "feat: trigger deployment"
 git push origin main
+```
 
 Monitor progress in the Actions tab of your GitHub repository.
 
 🌐 Accessing the Application
+```bash
 http://<EC2_PUBLIC_IP>:8080/api/home
 ```
