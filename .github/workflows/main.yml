@@ -45,4 +45,4 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/demo-simple-server
             docker stop demo-simple-server || true
             docker rm demo-simple-server || true
-            docker run -d -p 8080:8080 --name demo-simple-server ${{ secrets.DOCKER_USERNAME }}/demo-simple-server
+            docker run -d -p 9000:9000 --name demo-simple-server ${{ secrets.DOCKER_USERNAME }}/demo-simple-server
