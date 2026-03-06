@@ -20,6 +20,7 @@ jobs:
           distribution: temurin
           java-version: 21
 
+
       - name: Build Maven JAR
         run: mvn clean package -DskipTests
 
