@@ -1,153 +1,92 @@
-# Spring Boot CI/CD Deployment with Docker, GitHub Actions, and AWS EC2
+Spring Boot CI/CD: Docker, GitHub Actions & AWS EC2
+This project demonstrates a fully automated pipeline for deploying a Spring Boot application. Every push to the main branch triggers a workflow that builds, containerizes, and deploys the latest version to an AWS cloud environment.
 
-This project demonstrates a complete CI/CD pipeline for deploying a Spring Boot application using Docker, GitHub Actions, DockerHub, and AWS EC2.
+🛠 Tech Stack
+Language: Java 21
 
-Every push to the `main` branch automatically builds the application, creates a Docker image, pushes it to DockerHub, and deploys it to an EC2 server.
+Framework: Spring Boot 3.x (Maven)
 
----
+Containerization: Docker & DockerHub
 
-## Tech Stack
+CI/CD: GitHub Actions
 
-- Java 21
-- Spring Boot
-- Maven
-- Docker
-- GitHub Actions
-- DockerHub
-- AWS EC2
+Cloud: AWS EC2 (Ubuntu)
 
----
+🔄 CI/CD Pipeline Flow
+Push: Developer pushes code to the main branch.
 
-## CI/CD Pipeline Flow
+Build: GitHub Actions pulls the code and runs a Maven build to generate a .jar.
 
-Developer pushes code → GitHub repository → GitHub Actions builds the project → Docker image is created → image is pushed to DockerHub → GitHub Actions connects to EC2 via SSH → server pulls latest image → container is restarted with the new version.
+Containerize: A Docker image is built using the provided Dockerfile.
 
----
+Registry: The image is pushed to DockerHub.
 
-## Project Structure
+Deploy: GitHub Actions connects to the AWS EC2 instance via SSH.
 
+Refresh: The server pulls the new image, stops the old container, and starts the fresh version.
 
+📂 Project Structure
+Plaintext
 demo-simple-server
-│
-├── src/
-│
-├── Dockerfile
-├── pom.xml
-│
-└── .github/
-└── workflows/
-└── deploy.yml
+├── .github/workflows/
+│   └── deploy.yml          # GitHub Actions Pipeline
+├── src/                    # Application Source Code
+├── Dockerfile              # Container Definition
+├── pom.xml                 # Maven Configuration
+└── README.md
+⚙️ Workflow Breakdown (deploy.yml)
+The pipeline executes the following automated steps:
 
+Step	Action	Description
+1	actions/checkout@v4	Downloads the repository code to the runner.
+2	actions/setup-java@v4	Installs Java 21 on the runner.
+3	mvn clean package	Builds the project and creates the executable JAR.
+4	docker/login-action	Authenticates with DockerHub using stored secrets.
+5	docker build & push	Packages the app as an image and uploads it to the registry.
+6	SSH Deployment	Connects to EC2 to pull the image and restart the container.
+🔐 Configuration & Security
+1. GitHub Secrets
+Add these variables in your repository under Settings > Secrets and variables > Actions:
 
----
+DOCKER_USERNAME: Your DockerHub username.
 
-## Docker Setup
+DOCKER_PASSWORD: Your DockerHub access token.
 
-Build the Docker image:
+EC2_HOST: Public IP address or hostname of your EC2.
 
+EC2_SSH_KEY: The content of your private .pem key.
 
-docker build -t demo-simple-server .
+2. AWS Security Group
+To ensure connectivity, open the following inbound ports:
 
+Port 22 (SSH): Allows GitHub Actions to trigger deployment.
 
-Run the container:
+Port 8080 (TCP): Allows users to access the Spring Boot API.
 
+3. EC2 Server Setup
+Run these commands once on your Ubuntu instance to prepare the Docker environment:
 
-docker run -d -p 8080:8080 demo-simple-server
-
-
----
-
-## GitHub Actions Workflow
-
-The CI/CD pipeline is defined in:
-
-
-.github/workflows/deploy.yml
-
-
-Pipeline steps:
-
-1. Checkout repository
-2. Setup Java
-3. Build the Maven project
-4. Login to DockerHub
-5. Build Docker image
-6. Push image to DockerHub
-7. SSH into EC2 server
-8. Pull latest Docker image
-9. Stop existing container
-10. Start new container
-
----
-
-## GitHub Secrets
-
-The following secrets must be configured in the repository:
-
-
-DOCKER_USERNAME
-DOCKER_PASSWORD
-EC2_HOST
-EC2_SSH_KEY
-
-
-- `DOCKER_USERNAME` – DockerHub username  
-- `DOCKER_PASSWORD` – DockerHub access token  
-- `EC2_HOST` – Public EC2 IP or hostname  
-- `EC2_SSH_KEY` – Private SSH key used to access EC2  
-
----
-
-## EC2 Server Setup
-
-Install Docker on the EC2 instance:
-
-
-sudo apt update
-sudo apt install docker.io -y
-
-
-Add the ubuntu user to the docker group:
-
-
+Bash
+sudo apt update && sudo apt install docker.io -y
 sudo usermod -aG docker ubuntu
+# Note: Log out and log back in for group changes to take effect
+🚀 How to Deploy
+Clone the repository.
 
+Configure the GitHub Secrets listed above.
 
-Reconnect to apply changes.
+Push to the main branch:
 
----
-
-## AWS Security Group
-
-Open the following ports in the EC2 security group:
-
-
-22 - SSH access
-8080 - Application access
-
-
----
-
-## Deployment
-
-Push changes to the main branch:
-
-
+Bash
 git add .
-git commit -m "deploy"
-git push
+git commit -m "feat: trigger deployment"
+git push origin main
+Monitor the progress in the "Actions" tab of your GitHub repository.
 
-
-GitHub Actions will automatically build and deploy the new version to the EC2 server.
-
----
-
-## Access the Application
-
-
+🌐 Accessing the Application
+Once the pipeline finishes successfully, your API will be available at:
 http://<EC2_PUBLIC_IP>:8080/api/home
 
----
-- Enable HTTPS with Let's Encrypt
-- Implement zero-downtime deployments
-- Add container health checks
+Example: http://98.92.43.60:8080/api/home
+
+Would you like me to help you write the specific deploy.yml file content or the Dockerfile for this project?
